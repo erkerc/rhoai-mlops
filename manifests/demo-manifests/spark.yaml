@@ -1,0 +1,151 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: aws-connection-pipelines
+  namespace: spark-demo
+  labels:
+    opendatahub.io/dashboard: 'true'
+    opendatahub.io/managed: 'true'
+  annotations:
+    opendatahub.io/connection-type: s3
+    openshift.io/display-name: pipelines
+stringData:
+  AWS_ACCESS_KEY_ID: minio
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_S3_BUCKET: spark-pipelines
+  AWS_S3_ENDPOINT: http://minio-service.minio.svc:9000
+  AWS_SECRET_ACCESS_KEY: minio123
+type: Opaque
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spark-role
+  namespace: spark-demo
+rules:
+  - verbs:
+      - '*'
+    apiGroups:
+      - ''
+    resources:
+      - pods
+  - verbs:
+      - '*'
+    apiGroups:
+      - ''
+    resources:
+      - configmaps
+  - verbs:
+      - '*'
+    apiGroups:
+      - ''
+    resources:
+      - services
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spark-serviceaccount_name
+  namespace: spark-demo
+subjects:
+  - kind: ServiceAccount
+    name: pyspark
+  - kind: ServiceAccount
+    name: pipeline-runner-pipelines-definition
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: spark-role
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-from-all-namespaces
+  namespace: spark-demo
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - namespaceSelector: {}
+  policyTypes:
+    - Ingress
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-from-ingress-namespace
+  namespace: spark-demo
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              network-policy: global
+  policyTypes:
+    - Ingress
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  annotations:
+    openshift.io/description: ''
+    openshift.io/display-name: development
+  name: development
+  namespace: spark-demo
+  finalizers:
+    - kubernetes.io/pvc-protection
+  labels:
+    opendatahub.io/dashboard: 'true'
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  volumeMode: Filesystem
+---
+apiVersion: datasciencepipelinesapplications.opendatahub.io/v1alpha1
+kind: DataSciencePipelinesApplication
+metadata:
+  finalizers:
+    - datasciencepipelinesapplications.opendatahub.io/finalizer
+  name: pipelines-definition
+  namespace: spark-demo
+spec:
+  apiServer:
+    stripEOF: true
+    dbConfigConMaxLifetimeSec: 120
+    applyTektonCustomResource: true
+    deploy: true
+    enableSamplePipeline: false
+    autoUpdatePipelineDefaultVersion: true
+    archiveLogs: false
+    terminateStatus: Cancelled
+    enableOauth: true
+    trackArtifacts: true
+    collectMetrics: true
+    injectDefaultScript: true
+  database:
+    mariaDB:
+      deploy: true
+      pipelineDBName: mlpipeline
+      pvcSize: 10Gi
+      username: mlpipeline
+  objectStorage:
+    externalStorage:
+      bucket: spark-pipelines
+      host: minio-service.minio.svc:9000
+      port: ''
+      s3CredentialsSecret:
+        accessKey: AWS_ACCESS_KEY_ID
+        secretKey: AWS_SECRET_ACCESS_KEY
+        secretName: aws-connection-pipelines
+      scheme: http
+      secure: false
+  persistenceAgent:
+    deploy: true
+    numWorkers: 2
+  scheduledWorkflow:
+    cronScheduleTimezone: UTC
+    deploy: true

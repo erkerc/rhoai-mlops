@@ -1,0 +1,166 @@
+kind: Secret
+apiVersion: v1
+metadata:
+  name: aws-connection-pipelines
+  namespace: fraud-detection
+  labels:
+    opendatahub.io/dashboard: 'true'
+    opendatahub.io/managed: 'true'
+  annotations:
+    opendatahub.io/connection-type: s3
+    openshift.io/display-name: pipelines
+stringData:
+  AWS_ACCESS_KEY_ID: minio
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_S3_BUCKET: fraud-detection-pipelines
+  AWS_S3_ENDPOINT: http://minio-service.minio.svc:9000
+  AWS_SECRET_ACCESS_KEY: minio123
+type: Opaque
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: aws-connection-fraud-detection
+  namespace: fraud-detection
+  labels:
+    opendatahub.io/dashboard: 'true'
+    opendatahub.io/managed: 'true'
+  annotations:
+    opendatahub.io/connection-type: s3
+    openshift.io/display-name: fraud-detection
+stringData:
+  AWS_ACCESS_KEY_ID: minio
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_S3_BUCKET: fraud-detection
+  AWS_S3_ENDPOINT: http://minio-service.minio.svc:9000
+  AWS_SECRET_ACCESS_KEY: minio123
+type: Opaque
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  annotations:
+    openshift.io/description: ''
+    openshift.io/display-name: development
+  name: development
+  namespace: fraud-detection
+  finalizers:
+    - kubernetes.io/pvc-protection
+  labels:
+    opendatahub.io/dashboard: 'true'
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+  volumeMode: Filesystem
+---
+apiVersion: datasciencepipelinesapplications.opendatahub.io/v1alpha1
+kind: DataSciencePipelinesApplication
+metadata:
+  finalizers:
+    - datasciencepipelinesapplications.opendatahub.io/finalizer
+  name: pipelines-definition
+  namespace: fraud-detection
+spec:
+  apiServer:
+    stripEOF: true
+    dbConfigConMaxLifetimeSec: 120
+    applyTektonCustomResource: true
+    deploy: true
+    enableSamplePipeline: false
+    autoUpdatePipelineDefaultVersion: true
+    archiveLogs: false
+    terminateStatus: Cancelled
+    enableOauth: true
+    trackArtifacts: true
+    collectMetrics: true
+    injectDefaultScript: true
+  database:
+    mariaDB:
+      deploy: true
+      pipelineDBName: mlpipeline
+      pvcSize: 10Gi
+      username: mlpipeline
+  objectStorage:
+    externalStorage:
+      bucket: fraud-detection-pipelines
+      host: minio-service.minio.svc:9000
+      port: ''
+      s3CredentialsSecret:
+        accessKey: AWS_ACCESS_KEY_ID
+        secretKey: AWS_SECRET_ACCESS_KEY
+        secretName: aws-connection-pipelines
+      scheme: http
+      secure: false
+  persistenceAgent:
+    deploy: true
+    numWorkers: 2
+  scheduledWorkflow:
+    cronScheduleTimezone: UTC
+    deploy: true
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: fraud-detection-training-pvc
+  namespace: fraud-detection
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  volumeMode: Filesystem
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: fraud-detection-offline-scoring-pvc
+  namespace: fraud-detection
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  volumeMode: Filesystem
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-from-all-namespaces
+  namespace: fraud-detection
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - namespaceSelector: {}
+  policyTypes:
+    - Ingress
+---
+kind: NetworkPolicy
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: allow-from-ingress-namespace
+  namespace: fraud-detection
+spec:
+  podSelector: {}
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              network-policy: global
+  policyTypes:
+    - Ingress
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: starburst-data-connection
+stringData:
+  TRINO_USERNAME: "trino"
+  TRINO_PASSWORD: "trino"
+  TRINO_HOSTNAME: "trino-service"
+  TRINO_PORT: "8080"

@@ -1,0 +1,277 @@
+{
+  "doc_type": "pipeline",
+  "version": "3.0",
+  "json_schema": "http://api.dataplatform.ibm.com/schemas/common-pipeline/pipeline-flow/pipeline-flow-v3-schema.json",
+  "id": "elyra-auto-generated-pipeline",
+  "primary_pipeline": "primary",
+  "pipelines": [
+    {
+      "id": "primary",
+      "nodes": [
+        {
+          "id": "af4cff35-67a3-4a46-92fa-acc9b712421a",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "label": "",
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "data_preprocessing.py"
+            },
+            "ui_data": {
+              "label": "data_preprocessing.py",
+              "image": "/notebook/ray-demo/codeflare-elyra/static/elyra/python.svg",
+              "x_pos": 261,
+              "y_pos": 321,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "6506a238-0353-40c2-be2a-f7fc6919f376",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "pipeline_parameters": [
+                "hidden_size",
+                "max_epochs"
+              ],
+              "dependencies": [
+                "mnist.py",
+                "requirements.txt"
+              ],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "submit_training_job.py"
+            },
+            "label": "",
+            "ui_data": {
+              "label": "submit_training_job.py",
+              "image": "/notebook/ray-demo/codeflare-elyra/static/elyra/python.svg",
+              "x_pos": 587,
+              "y_pos": 330,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "0c7f1129-eed5-4c1f-8cce-f394ea777d57",
+                  "node_id_ref": "af4cff35-67a3-4a46-92fa-acc9b712421a",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "f9bc4691-b9bc-4de5-8189-b502afae8f73",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "label": "",
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "model_validation.py"
+            },
+            "ui_data": {
+              "label": "model_validation.py",
+              "image": "/notebook/ray-demo/codeflare-elyra/static/elyra/python.svg",
+              "x_pos": 946,
+              "y_pos": 335,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "701b419b-eb89-4ffd-91c5-704278a0772c",
+                  "node_id_ref": "6506a238-0353-40c2-be2a-f7fc6919f376",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "app_data": {
+        "ui_data": {
+          "comments": []
+        },
+        "version": 8,
+        "runtime_type": "KUBEFLOW_PIPELINES",
+        "properties": {
+          "name": "model-training",
+          "runtime": "Data Science Pipelines",
+          "pipeline_defaults": {
+            "mounted_volumes": [],
+            "kubernetes_tolerations": [],
+            "kubernetes_pod_annotations": [],
+            "kubernetes_pod_labels": [],
+            "kubernetes_shared_mem_size": {},
+            "env_vars": [],
+            "kubernetes_secrets": [
+              {
+                "env_var": "AWS_ACCESS_KEY_ID",
+                "name": "aws-connection-ray-demo",
+                "key": "AWS_ACCESS_KEY_ID"
+              },
+              {
+                "env_var": "AWS_SECRET_ACCESS_KEY",
+                "name": "aws-connection-ray-demo",
+                "key": "AWS_SECRET_ACCESS_KEY"
+              },
+              {
+                "env_var": "AWS_S3_ENDPOINT",
+                "name": "aws-connection-ray-demo",
+                "key": "AWS_S3_ENDPOINT"
+              },
+              {
+                "env_var": "AWS_S3_BUCKET",
+                "name": "aws-connection-ray-demo",
+                "key": "AWS_S3_BUCKET"
+              },
+              {
+                "env_var": "OCP_TOKEN",
+                "name": "ocp-login-secret",
+                "key": "OCP_TOKEN"
+              },
+              {
+                "env_var": "OCP_API_SERVER_URL",
+                "name": "ocp-login-secret",
+                "key": "OCP_API_SERVER_URL"
+              }
+            ],
+            "runtime_image": "quay.io/mmurakam/runtimes:codeflare-v0.1.0"
+          },
+          "pipeline_parameters": [
+            {
+              "name": "hidden_size",
+              "description": "",
+              "default_value": {
+                "type": "Integer",
+                "value": 64
+              },
+              "required": false
+            },
+            {
+              "name": "max_epochs",
+              "description": "",
+              "default_value": {
+                "type": "Integer",
+                "value": 10
+              },
+              "required": false
+            }
+          ]
+        }
+      },
+      "runtime_ref": ""
+    }
+  ],
+  "schemas": []
+}

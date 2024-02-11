@@ -1,0 +1,117 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: object-detection
+  labels:
+    modelmesh-enabled: 'true'
+    opendatahub.io/dashboard: 'true'
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: aws-connection-models
+  namespace: object-detection
+  labels:
+    opendatahub.io/dashboard: 'true'
+    opendatahub.io/managed: 'true'
+  annotations:
+    opendatahub.io/connection-type: s3
+    openshift.io/display-name: models
+stringData:
+  AWS_ACCESS_KEY_ID: minio
+  AWS_DEFAULT_REGION: us-east-1
+  AWS_S3_BUCKET: models
+  AWS_S3_ENDPOINT: http://minio-service.minio.svc:9000
+  AWS_SECRET_ACCESS_KEY: minio123
+type: Opaque
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: model-init-sa
+  namespace: object-detection
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: model-init-role
+  namespace: object-detection
+rules:
+- apiGroups: 
+    - serving.kserve.io
+  resources:
+    - inferenceservices
+  verbs:
+    - create
+    - get
+    - delete
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: model-init-rb
+  namespace: object-detection
+subjects:
+- kind: ServiceAccount
+  name: model-init-sa
+  namespace: object-detection
+roleRef:
+  kind: Role
+  name: model-init-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: serving.kserve.io/v1alpha1
+kind: ServingRuntime
+metadata:
+  annotations:
+    enable-auth: 'false'
+    enable-route: 'true'
+    opendatahub.io/disable-gpu: 'true'
+    opendatahub.io/template-display-name: OpenVINO Model Server
+    opendatahub.io/template-name: ovms
+    openshift.io/display-name: OVMS
+  name: ovms
+  namespace: object-detection
+  labels:
+    name: ovms
+    opendatahub.io/dashboard: 'true'
+spec:
+  builtInAdapter:
+    memBufferBytes: 134217728
+    modelLoadingTimeoutMillis: 90000
+    runtimeManagementPort: 8888
+    serverType: ovms
+  containers:
+    - args:
+        - '--port=8001'
+        - '--rest_port=8888'
+        - '--config_path=/models/model_config_list.json'
+        - '--file_system_poll_wait_seconds=0'
+        - '--grpc_bind_address=127.0.0.1'
+        - '--rest_bind_address=127.0.0.1'
+      image: >-
+        quay.io/opendatahub/openvino_model_server@sha256:20dbfbaf53d1afbd47c612d953984238cb0e207972ed544a5ea662c2404f276d
+      name: ovms
+      resources:
+        limits:
+          cpu: '2'
+          memory: 8Gi
+        requests:
+          cpu: '1'
+          memory: 4Gi
+  grpcDataEndpoint: 'port:8001'
+  grpcEndpoint: 'port:8085'
+  multiModel: true
+  protocolVersions:
+    - grpc-v1
+  replicas: 1
+  supportedModelFormats:
+    - autoSelect: true
+      name: openvino_ir
+      version: opset1
+    - autoSelect: true
+      name: onnx
+      version: '1'
+    - autoSelect: true
+      name: tensorflow
+      version: '2'
