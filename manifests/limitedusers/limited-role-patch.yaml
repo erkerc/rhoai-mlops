@@ -1,0 +1,12 @@
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: workbench-patch
+  namespace: object-detection
+rules:
+  - verbs:
+      - patch
+    apiGroups:
+      - kubeflow.org
+    resources:
+      - notebooks

@@ -1,0 +1,13 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: runworkbench-group-object-detection
+  namespace: object-detection
+subjects:
+  - kind: Group
+    apiGroup: rbac.authorization.k8s.io
+    name: group_object_detection
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: workbench-patch
