@@ -228,7 +228,7 @@ spec:
             claimName: codeflare-elyra
         - name: elyra-dsp-details
           secret:
-            secretName: ds-pipeline-config
+            secretName: aws-connection-pipelines
         - emptyDir:
             medium: Memory
           name: shm
