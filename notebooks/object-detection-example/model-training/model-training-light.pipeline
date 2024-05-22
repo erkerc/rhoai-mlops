@@ -9,329 +9,89 @@
       "id": "primary",
       "nodes": [
         {
-          "id": "09b48e95-e953-4a59-977b-bc751bc45798",
+          "id": "07a1a00d-c3d7-426e-ab07-e06782f02f1b",
           "type": "execution_node",
           "op": "execute-python-node",
           "app_data": {
             "component_parameters": {
               "pipeline_parameters": [
-                "sample_count"
-              ],
-              "dependencies": [
-                "configuration.yaml"
-              ],
-              "include_subdirectories": false,
-              "outputs": [],
-              "env_vars": [
-                {
-                  "env_var": "sample_count"
-                }
-              ],
-              "kubernetes_pod_annotations": [],
-              "kubernetes_pod_labels": [],
-              "kubernetes_secrets": [],
-              "kubernetes_shared_mem_size": {},
-              "kubernetes_tolerations": [],
-              "mounted_volumes": [],
-              "filename": "data_ingestion.py",
-              "runtime_image": "quay.io/eercan/odh-runtimes/object-detection-runtime:v1.0",
-              "cpu": 8,
-              "cpu_limit": 16,
-              "memory": 10,
-              "memory_limit": 24
-            },
-            "label": "",
-            "ui_data": {
-              "label": "data_ingestion.py",
-              "image": "/notebook/object-detection/object-detection-workbench/static/elyra/python.svg",
-              "x_pos": 409,
-              "y_pos": 134,
-              "description": "Run Python script"
-            }
-          },
-          "inputs": [
-            {
-              "id": "inPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Input Port"
-                }
-              }
-            }
-          ],
-          "outputs": [
-            {
-              "id": "outPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Output Port"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "id": "b40184b7-b124-4c6a-8fc0-1a58db3859fc",
-          "type": "execution_node",
-          "op": "execute-python-node",
-          "app_data": {
-            "component_parameters": {
-              "pipeline_parameters": [
-                "batch_size",
-                "epochs",
-                "base_model"
-              ],
-              "dependencies": [
-                "yolov5/*",
-                "configuration.yaml"
-              ],
-              "include_subdirectories": true,
-              "outputs": [
-                "model.pt"
-              ],
-              "env_vars": [],
-              "kubernetes_pod_annotations": [],
-              "kubernetes_pod_labels": [],
-              "kubernetes_secrets": [],
-              "kubernetes_shared_mem_size": {
-                "size": 16
-              },
-              "kubernetes_tolerations": [],
-              "mounted_volumes": [],
-              "filename": "model_training.py",
-              "gpu": 0,
-              "runtime_image": "quay.io/eercan/odh-runtimes/object-detection-runtime:v1.0",
-              "cpu": 8,
-              "memory": 16,
-              "memory_limit": 24
-            },
-            "label": "",
-            "ui_data": {
-              "label": "model_training.py",
-              "image": "/notebook/object-detection/object-detection-workbench/static/elyra/python.svg",
-              "x_pos": 510,
-              "y_pos": 352,
-              "description": "Run Python script"
-            }
-          },
-          "inputs": [
-            {
-              "id": "inPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Input Port"
-                }
-              },
-              "links": [
-                {
-                  "id": "d0e01d39-77fe-4968-adbb-ecd7d9c5325a",
-                  "node_id_ref": "eceab942-a848-4482-925d-9ecdd099256f",
-                  "port_id_ref": "outPort"
-                }
-              ]
-            }
-          ],
-          "outputs": [
-            {
-              "id": "outPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Output Port"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "id": "eceab942-a848-4482-925d-9ecdd099256f",
-          "type": "execution_node",
-          "op": "execute-python-node",
-          "app_data": {
-            "component_parameters": {
-              "dependencies": [
-                "configuration.yaml"
-              ],
-              "include_subdirectories": false,
-              "outputs": [],
-              "env_vars": [],
-              "kubernetes_pod_annotations": [],
-              "kubernetes_pod_labels": [],
-              "kubernetes_secrets": [],
-              "kubernetes_shared_mem_size": {},
-              "kubernetes_tolerations": [],
-              "mounted_volumes": [],
-              "filename": "preprocessing.py",
-              "runtime_image": "quay.io/eercan/odh-runtimes/object-detection-runtime:v1.0",
-              "cpu": 8,
-              "memory": 10,
-              "memory_limit": 24
-            },
-            "label": "",
-            "ui_data": {
-              "label": "preprocessing.py",
-              "image": "/notebook/object-detection/object-detection-workbench/static/elyra/python.svg",
-              "x_pos": 428,
-              "y_pos": 259,
-              "description": "Run Python script"
-            }
-          },
-          "inputs": [
-            {
-              "id": "inPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Input Port"
-                }
-              },
-              "links": [
-                {
-                  "id": "2627b0ee-8ed7-4fc2-9381-14726af10260",
-                  "node_id_ref": "09b48e95-e953-4a59-977b-bc751bc45798",
-                  "port_id_ref": "outPort"
-                }
-              ]
-            }
-          ],
-          "outputs": [
-            {
-              "id": "outPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Output Port"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "id": "8124ead5-6286-4483-821e-6369a7083d0b",
-          "type": "execution_node",
-          "op": "execute-python-node",
-          "app_data": {
-            "component_parameters": {
-              "dependencies": [
-                "yolov5/*"
-              ],
-              "include_subdirectories": false,
-              "outputs": [
-                "model.onnx"
-              ],
-              "env_vars": [],
-              "kubernetes_pod_annotations": [],
-              "kubernetes_pod_labels": [],
-              "kubernetes_secrets": [],
-              "kubernetes_shared_mem_size": {},
-              "kubernetes_tolerations": [],
-              "mounted_volumes": [],
-              "filename": "model_conversion.py",
-              "runtime_image": "quay.io/eercan/odh-runtimes/object-detection-runtime:v1.0",
-              "memory": 12,
-              "memory_limit": 16,
-              "cpu": 8
-            },
-            "label": "",
-            "ui_data": {
-              "label": "model_conversion.py",
-              "image": "/notebook/object-detection/object-detection-workbench/static/elyra/python.svg",
-              "x_pos": 578,
-              "y_pos": 421,
-              "description": "Run Python script"
-            }
-          },
-          "inputs": [
-            {
-              "id": "inPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Input Port"
-                }
-              },
-              "links": [
-                {
-                  "id": "144ac4c4-750a-4a34-b072-5e966ad32d1c",
-                  "node_id_ref": "b40184b7-b124-4c6a-8fc0-1a58db3859fc",
-                  "port_id_ref": "outPort"
-                }
-              ]
-            }
-          ],
-          "outputs": [
-            {
-              "id": "outPort",
-              "app_data": {
-                "ui_data": {
-                  "cardinality": {
-                    "min": 0,
-                    "max": -1
-                  },
-                  "label": "Output Port"
-                }
-              }
-            }
-          ]
-        },
-        {
-          "id": "1d3834c6-5f1b-4b5e-a45a-51c0ca032c14",
-          "type": "execution_node",
-          "op": "execute-python-node",
-          "app_data": {
-            "component_parameters": {
-              "pipeline_parameters": [
-                "model_object_prefix"
+                "sample_count",
+                "batch_size"
               ],
               "dependencies": [],
               "include_subdirectories": false,
               "outputs": [],
-              "env_vars": [
-                {
-                  "env_var": "model_object_prefix",
-                  "value": "model"
-                }
-              ],
+              "env_vars": [],
               "kubernetes_pod_annotations": [],
               "kubernetes_pod_labels": [],
               "kubernetes_secrets": [],
               "kubernetes_shared_mem_size": {},
               "kubernetes_tolerations": [],
               "mounted_volumes": [],
-              "filename": "model_upload.py",
-              "runtime_image": "quay.io/eercan/odh-runtimes/object-detection-runtime:v1.0",
-              "cpu": 8
+              "filename": "lt_data_ingestion.py"
             },
-            "label": "",
+            "label": "data ingestion",
             "ui_data": {
-              "label": "model_upload.py",
+              "label": "data ingestion",
               "image": "/notebook/object-detection/object-detection-workbench/static/elyra/python.svg",
-              "x_pos": 663,
-              "y_pos": 556,
+              "x_pos": 12,
+              "y_pos": 138,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              }
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "05c9aa40-8d1b-44f1-b6d6-dc633448cb46",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "lt_preprocessing.py"
+            },
+            "label": "preprocessing",
+            "ui_data": {
+              "label": "preprocessing",
+              "image": "/notebook/object-detection/object-detection-workbench/static/elyra/python.svg",
+              "x_pos": 254,
+              "y_pos": 220,
               "description": "Run Python script"
             }
           },
@@ -349,8 +109,201 @@
               },
               "links": [
                 {
-                  "id": "7358fb20-f54c-4cbf-9c34-8028d36b19f6",
-                  "node_id_ref": "8124ead5-6286-4483-821e-6369a7083d0b",
+                  "id": "824c089d-bd66-45d4-b73a-bf3ef6fb2c02",
+                  "node_id_ref": "07a1a00d-c3d7-426e-ab07-e06782f02f1b",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "e78bdc0d-b3aa-4214-a42d-26d53b2c46ac",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "lt_model_conversion.py"
+            },
+            "label": "model conversion",
+            "ui_data": {
+              "label": "model conversion",
+              "image": "/notebook/object-detection/object-detection-workbench/static/elyra/python.svg",
+              "x_pos": 570,
+              "y_pos": 249,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "50d6daba-308c-4a79-ab2a-83c3f6d1bcdb",
+                  "node_id_ref": "901c506d-0f93-42bc-9991-cc5a94375d22",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "901c506d-0f93-42bc-9991-cc5a94375d22",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "lt_model_training.py"
+            },
+            "label": "model training",
+            "ui_data": {
+              "label": "model training",
+              "image": "/notebook/object-detection/object-detection-workbench/static/elyra/python.svg",
+              "x_pos": 487,
+              "y_pos": 130,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "2adfea50-fa7f-45e0-b24c-70b90800a98b",
+                  "node_id_ref": "05c9aa40-8d1b-44f1-b6d6-dc633448cb46",
+                  "port_id_ref": "outPort"
+                }
+              ]
+            }
+          ],
+          "outputs": [
+            {
+              "id": "outPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Output Port"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": "716a3bc4-05c8-4629-9cb3-2fb812dd5c2a",
+          "type": "execution_node",
+          "op": "execute-python-node",
+          "app_data": {
+            "component_parameters": {
+              "pipeline_parameters": [
+                "sample_count",
+                "batch_size"
+              ],
+              "dependencies": [],
+              "include_subdirectories": false,
+              "outputs": [],
+              "env_vars": [],
+              "kubernetes_pod_annotations": [],
+              "kubernetes_pod_labels": [],
+              "kubernetes_secrets": [],
+              "kubernetes_shared_mem_size": {},
+              "kubernetes_tolerations": [],
+              "mounted_volumes": [],
+              "filename": "lt_model_upload.py"
+            },
+            "label": "model upload",
+            "ui_data": {
+              "label": "model upload",
+              "image": "/notebook/object-detection/object-detection-workbench/static/elyra/python.svg",
+              "x_pos": 646,
+              "y_pos": 409,
+              "description": "Run Python script"
+            }
+          },
+          "inputs": [
+            {
+              "id": "inPort",
+              "app_data": {
+                "ui_data": {
+                  "cardinality": {
+                    "min": 0,
+                    "max": -1
+                  },
+                  "label": "Input Port"
+                }
+              },
+              "links": [
+                {
+                  "id": "f7dc6013-96c6-4b51-bdce-4070164b130d",
+                  "node_id_ref": "e78bdc0d-b3aa-4214-a42d-26d53b2c46ac",
                   "port_id_ref": "outPort"
                 }
               ]
@@ -379,12 +332,10 @@
         "version": 8,
         "runtime_type": "KUBEFLOW_PIPELINES",
         "properties": {
-          "name": "model-training-cpu",
+          "name": "model-training-light",
           "runtime": "Data Science Pipelines",
           "pipeline_defaults": {
-            "kubernetes_shared_mem_size": {
-              "size": 16
-            },
+            "kubernetes_shared_mem_size": {},
             "mounted_volumes": [
               {
                 "path": "/data",
